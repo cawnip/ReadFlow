@@ -28,6 +28,8 @@ body {
   font-size: 18px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent; /* no grey flash on tap (iOS) */
+  overscroll-behavior-y: none; /* block pull-to-refresh / rubber-band */
 }
 
 button {
@@ -37,13 +39,15 @@ button {
 
 .app {
   min-height: 100vh;
+  min-height: 100dvh; /* iOS: account for the dynamic toolbar */
 }
 
 /* ---------- Home ---------- */
 .home {
   max-width: 720px;
   margin: 0 auto;
-  padding: 48px 20px 64px;
+  padding: calc(48px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right))
+    calc(64px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
 }
 
 .home-header {
@@ -230,9 +234,11 @@ button {
   max-width: 720px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right))
+    calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
 }
 
 .reader-bar {
@@ -442,7 +448,9 @@ button {
   max-width: 720px;
   margin: 0 auto;
   min-height: 100vh;
-  padding: 20px;
+  min-height: 100dvh;
+  padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right))
+    calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
   display: flex;
   flex-direction: column;
 }
@@ -562,6 +570,10 @@ button {
   flex: 1;
   min-height: 0; /* allow the flex child to shrink so it scrolls internally */
   overflow-y: auto;
+  overscroll-behavior: contain; /* keep scroll inside the reader on iOS */
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  -webkit-user-select: none;
   scrollbar-width: none;
   position: relative;
   border-radius: 12px;
@@ -612,4 +624,29 @@ button {
   .flow-line {
     font-size: 23px;
   }
+}
+
+/* Touch devices: hover sticks after a tap, so neutralise lift effects and
+   give a quick press feedback instead. */
+@media (hover: none) {
+  .book-card:hover,
+  .format-card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--line);
+  }
+  .chip:hover,
+  .btn:hover {
+    border-color: var(--line);
+  }
+}
+
+.book-card:active,
+.format-card:active {
+  transform: scale(0.99);
+}
+
+.btn:active,
+.chip:active {
+  opacity: 0.8;
 }
